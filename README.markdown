@@ -53,16 +53,20 @@ Useful for non-standard layouts :
 
 {ps_url} is a versatile shorthand for the Link class methods. 
 
-It accepts model representations in any form (object, array, int)
+It accepts model representations in any form (object, array, int) and accepts an arbitrary number of
+additional parameters. 
 
 Here are some examples :
 
-
+	{* Builds a product array and prints link *}
     {append var='product' index='id_product' value=8}
     {append var='product' index='link_rewrite' value='product_8'}
-
-    {ps_url product=$product}
+    {ps_url product=$product foo='bar'}
+    
+    {* Equivalent to above with integer *}
     {ps_url product=8 content_only='1'}
+    
+    {* CMS, Categories... *}
     {ps_url cms=4}
-    {ps_url category=3}
+    {ps_url category=$category}
     

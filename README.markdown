@@ -3,14 +3,18 @@
 
 {pan} is a tool / theme framework for PrestaShop 1.4.x
 
-It aims to simplify theme development by providing simple, clean, easy to use Smarty plugins. 
+It aims to simplify theme development by providing simple, clean, easy to use **Smarty plugins**
+
+It is largely inspired by the Java Server Pages Tag Libraries
 
 Template streams
 ----------------
 
-{pan} registers PHP streams for Smarty to resolve templates for different sources. 
+{pan} registers PHP streams for Smarty to resolve templates from different sources. 
 
 Right now there is the **theme://** stream, that allows to include templates for other themes. 
+
+**A database stream is in the roadmap !**
 
 Useful if you don't need to override all the templates and want to fallback to default theme. 
 

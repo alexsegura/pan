@@ -18,11 +18,13 @@ Right now there is the **theme://** stream, that allows to include templates for
 
 Useful if you don't need to override all the templates and want to fallback to default theme. 
 
+```smarty
     {* Displays breadcrumb.tpl from default theme *}
     {include file="theme:breadcrumb@prestashop"}
 			
     {* Displays breadcrumb.tpl from current theme *}
     {include file="theme:breadcrumb"}
+```
 
 {ps_show includes=mixed excludes=mixed}
 ---------------------------------------
@@ -31,6 +33,7 @@ Useful if you don't need to override all the templates and want to fallback to d
 
 Useful to display columns only on certain pages. 
 
+```smarty
     {ps_show includes='index'}
     <p>I'm displayed only on home page</p>
     {/ps_show}
@@ -38,6 +41,7 @@ Useful to display columns only on certain pages.
     {ps_show excludes='category|cms'}
     <p>I'm not displayed on category and cms pages</p>
     {/ps_show}
+```
 
 {ps_hook mod=string hook=string}
 --------------------------------
@@ -46,7 +50,9 @@ Useful to display columns only on certain pages.
 
 Useful for non-standard layouts :
 
+```smarty
     {ps_hook mod='blocklanguages' hook='top'}
+```
     
 {ps_url ...}
 ------------
@@ -58,6 +64,7 @@ additional parameters.
 
 Here are some examples :
 
+```smarty
 	{* Builds a product array and prints link *}
     {append var='product' index='id_product' value=8}
     {append var='product' index='link_rewrite' value='product_8'}
@@ -69,4 +76,5 @@ Here are some examples :
     {* CMS, Categories... *}
     {ps_url cms=4}
     {ps_url category=$category}
+ ```
     

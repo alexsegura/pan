@@ -21,7 +21,7 @@ Useful if you don't need to override all the templates and want to fallback to d
     {include file="theme:breadcrumb"}
 
 {ps_show includes=mixed excludes=mixed}
----------
+---------------------------------------
 
 {ps_show} is a Smarty block plugin that allows to show/hide content based on the page name.
 
@@ -35,3 +35,30 @@ Useful to display columns only on certain pages.
     <p>I'm not displayed on category and cms pages</p>
     {/ps_show}
 
+{ps_hook mod=string hook=string}
+--------------------------------
+
+{ps_hook} allows to invoke any (callable & registered) hook of any module... anywhere. 
+
+Useful for non-standard layouts :
+
+    {ps_hook mod='blocklanguages' hook='top'}
+    
+{ps_url ...}
+------------
+
+{ps_url} is a versatile shorthand for the Link class methods. 
+
+It accepts model representations in any form (object, array, int)
+
+Here are some examples :
+
+
+    {append var='product' index='id_product' value=8}
+    {append var='product' index='link_rewrite' value='product_8'}
+
+    {ps_url product=$product}
+    {ps_url product=8 content_only='1'}
+    {ps_url cms=4}
+    {ps_url category=3}
+    

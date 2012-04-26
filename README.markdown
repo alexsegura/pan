@@ -16,6 +16,7 @@ Installation
 ----------------
 
 {pan} is a standard PrestaShop module. 
+
 Use the "ZIP" button above to get the source tree, unzip it in prestashop/modules/pan, and start coding. 
 
 Template streams

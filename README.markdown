@@ -38,6 +38,29 @@ Useful if you don't need to override all the templates and want to fallback to d
     {include file="theme:breadcrumb"}
 ```
 
+{ps_hook mod=string hook=string [view=string]}
+--------------------------------
+
+{ps_hook} allows to invoke any (callable & registered) hook of any module... anywhere. 
+
+Useful for non-standard layouts, and to "widgetize" your theme :
+
+```smarty
+    {ps_hook mod='blocklanguages' hook='top'}
+```
+{ps_hook} also fixes a common problem : how to use a module that was not designed to work with another hook. 
+
+You can invoke the hook method and override the view that will be displayed. 
+
+All the view variables for the standard hook will be available. 
+
+```smarty
+	{* Invokes blocklanguages :: hookTop(), *}
+	{* but displays the view modules/blocklanguages/footer.tpl *}
+	{* under the current theme *}
+    {ps_hook mod='blocklanguages' hook='top' view='footer'}
+```
+
 {ps_show includes=mixed excludes=mixed}
 ---------------------------------------
 
@@ -55,17 +78,6 @@ Useful to display columns only on certain pages.
     {/ps_show}
 ```
 
-{ps_hook mod=string hook=string}
---------------------------------
-
-{ps_hook} allows to invoke any (callable & registered) hook of any module... anywhere. 
-
-Useful for non-standard layouts :
-
-```smarty
-    {ps_hook mod='blocklanguages' hook='top'}
-```
-    
 {ps_url ...}
 ------------
 

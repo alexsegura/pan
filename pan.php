@@ -20,8 +20,6 @@ class Pan extends Module {
 		self :: $logger = new FileLogger(AbstractLogger :: DEBUG);
 		self :: $logger->setFilename(_PS_ROOT_DIR_ . '/log/pan.log');
 		
-		self :: $logger->log('ok');
-
 	}
 	
 	public function install() {
@@ -38,42 +36,39 @@ class Pan extends Module {
 		
 		stream_wrapper_register("theme", "Pan_Resource_Theme");
 		
-		$smarty->registerPlugin('function', 'ps_url', 		array('Pan', 'ps_url'));
-		$smarty->registerPlugin('function', 'ps_hook', 		array('Pan', 'ps_hook'));
+		$smarty->registerPlugin('function', 'ps_url', 			array('Pan', 'ps_url'));
+		$smarty->registerPlugin('function', 'ps_hook', 			array('Pan', 'ps_hook'));
+		$smarty->registerPlugin('function', 'ps_breadcrumb',	array('Pan', 'ps_breadcrumb'));
+		
 		$smarty->registerPlugin('block', 	'ps_show', 		array('Pan', 'ps_show'));
 		
 	}
 	
-	public static function ps_get_template($tpl_name, &$tpl_source, $smarty) {
-	   self :: $logger->log(__FUNCTION__);
-	   $tpl_source = 'IT WORKS';
-	   return true;
-	}
-	
-	public static function ps_get_timestamp($tpl_name, &$tpl_timestamp, $smarty) {
-	   self :: $logger->log(__FUNCTION__);
-	   $tpl_timestamp = strtotime('2012-04-20 12:00:00');
-	   return true;
-	}
-	
-	public static function ps_get_secure($tpl_name, &$smarty) {
-	   self :: $logger->log(__FUNCTION__);
-	   return true;
-	}
-	
-	public static function ps_get_trusted($tpl_name, &$smarty) {
-	   self :: $logger->log(__FUNCTION__);
-	   return true;
-	}
-	
 	public static function ps_hook($params, &$smarty) {
 		
-		$moduleName = $params['mod'];
+		$moduleName = $params['mod']; // FIXME mod should be optional
 		$hookName	= $params['hook'];
+		$viewName	= isset($params['view']) ? $params['view'] : null;
 		
 	    $module = Module :: getInstanceByName($moduleName);
-	    return Module :: hookExec($hookName, array(), $module->id);
+	    $contents = Module :: hookExec($hookName, array(), $module->id);
+	    
+	    if ($viewName) {
+	    	self :: $logger->log("An alternative view was specified : $viewName");
+	    	
+	    	$path 	= _PS_ROOT_DIR_.'/themes/' . _THEME_NAME_ 
+	    			. '/modules/' . $moduleName . '/' . $viewName . '.tpl';
+	    			
+	    	self :: $logger->log("Rendering view : " . $path);
+	    	$contents = $smarty->fetch($path);
+	    }
+	    
+	    return $contents;
 		
+	}
+	
+	public static function ps_breadcrumb($params, &$smarty) {
+		return '';
 	}
 	
 	public static function ps_show($params, $content, &$smarty, &$repeat) {

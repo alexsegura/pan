@@ -7,6 +7,17 @@ It aims to simplify theme development by providing simple, clean, easy to use **
 
 It is largely inspired by the Java Server Pages Tag Libraries
 
+Requirements
+------------
+
+{pan} requires Smarty 3. 
+
+Installation
+----------------
+
+{pan} is a standard PrestaShop module. 
+Use the "ZIP" button above to get the source tree, unzip it in prestashop/modules/pan, and start coding. 
+
 Template streams
 ----------------
 

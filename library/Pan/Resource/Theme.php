@@ -65,7 +65,7 @@ class Pan_Resource_Theme {
     	$this->exists = $smarty->templateExists($this->path);
     	
     	if ($this->exists)  {
-    		$this->content = $smarty->fetch($this->path);
+    		$this->content = file_get_contents($this->path);
     		return $this->content;
     	} else {
     		return '<!-- -->';

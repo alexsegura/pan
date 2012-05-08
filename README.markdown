@@ -24,9 +24,10 @@ Template streams
 
 {pan} registers PHP streams for Smarty to resolve templates from different sources. 
 
-Right now there is the **theme://** stream, that allows to include templates for other themes. 
+**theme://**
 
-**A database stream is in the roadmap !**
+The **theme://** stream is a shorthand to include templates from the current theme, 
+and even from other themes. 
 
 Useful if you don't need to override all the templates and want to fallback to default theme. 
 
@@ -37,6 +38,36 @@ Useful if you don't need to override all the templates and want to fallback to d
     {* Displays breadcrumb.tpl from current theme *}
     {include file="theme:breadcrumb"}
 ```
+
+**db://**
+
+The **db://** stream allows to include template which source is stored in database. 
+It uses the following schema, to organize template in a tree structure, much like folders. 
+
+<pre>
+
+mysql> desc ps_template_directory;
++-----------------------+-------------+------+-----+---------+----------------+
+| Field                 | Type        | Null | Key | Default | Extra          |
++-----------------------+-------------+------+-----+---------+----------------+
+| id_template_directory | int(11)     | NO   | PRI | NULL    | auto_increment |
+| node_level            | int(11)     | NO   |     | NULL    |                |
+| node_left             | int(11)     | NO   |     | NULL    |                |
+| node_right            | int(11)     | NO   |     | NULL    |                |
+| name                  | varchar(64) | YES  |     | NULL    |                |
++-----------------------+-------------+------+-----+---------+----------------+
+
+mysql> desc ps_template;
++-----------------------+-------------+------+-----+---------+----------------+
+| Field                 | Type        | Null | Key | Default | Extra          |
++-----------------------+-------------+------+-----+---------+----------------+
+| id_template           | int(11)     | NO   | PRI | NULL    | auto_increment |
+| id_template_directory | int(11)     | NO   |     | NULL    |                |
+| name                  | varchar(64) | NO   |     | NULL    |                |
+| content               | text        | YES  |     | NULL    |                |
++-----------------------+-------------+------+-----+---------+----------------+
+
+</pre>
 
 {ps_hook mod=string hook=string [view=string]}
 --------------------------------

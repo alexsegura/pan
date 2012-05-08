@@ -41,8 +41,22 @@ Useful if you don't need to override all the templates and want to fallback to d
 
 **db://**
 
-The **db://** stream allows to include template which source is stored in database. 
-It uses the following schema, to organize template in a tree structure, much like folders. 
+The **db://** stream allows to include template which source is stored in database.
+
+{pan} ships with a preferences page allowing to author templates, and organize them 
+in a tree structure (just like folders). **Currently in development, come and help finalize it**
+
+Templates can then be expressed with their materialized path. 
+
+```smarty
+    {* Displays the template named block1, stored in folder /ads in database *}
+    {include file="db:/ads/block1"}
+			
+    {* Displays the template named foo, located at the root of the templates *}
+    {include file="db:/foo"}
+```
+
+**Database schema**
 
 <pre>
 

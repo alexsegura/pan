@@ -1,7 +1,5 @@
 <?php
 
-require_once _PS_MODULE_DIR_ . 'pan/library/Pan/Resource/Theme.php';
-
 class Pan extends Module {
 	
 	public static $logger;
@@ -12,14 +10,75 @@ class Pan extends Module {
 		$this->tab 			= 'front_office_features';
 		$this->version 		= 1.0;
 		$this->author 		= 'Alexandre Segura';
-		$this->displayName 	= $this->l('{pan}');
+		$this->displayName 	= $this->l('Pan');
 		$this->description 	= $this->l('Theme framework for PrestaShop');
 		
 		parent :: __construct();
 		
+		spl_autoload_register(array($this, 'autoload'));
+		spl_autoload_register('__autoload');
+		
 		self :: $logger = new FileLogger(AbstractLogger :: DEBUG);
 		self :: $logger->setFilename(_PS_ROOT_DIR_ . '/log/pan.log');
 		
+		$this->initPropel();
+		
+		/*
+		// TODO Do this on install, to create a root
+		$s1 = new Pan_Db_TemplateDirectory();
+		$s1->setName('Templates');
+		$s1->makeRoot();
+		$s1->save();
+		*/
+		
+	}
+	
+	private function autoload() {
+		
+		$realpath 	= realpath(dirname(__FILE__) . '/library/');
+		$pathes 	= explode(PATH_SEPARATOR, get_include_path());
+		if (!in_array($realpath, $pathes)) {
+			$pathes[] = $realpath;
+		}
+		set_include_path(implode(PATH_SEPARATOR, $pathes));
+		
+		require_once 'Zend/Loader/Autoloader.php';
+		$loader = Zend_Loader_Autoloader :: getInstance();
+		
+		$loader->registerNamespace('Pan_');
+		
+	}
+	
+	private function initPropel() {
+		
+		require_once 'propel/Propel.php';
+		
+		Propel :: setConfiguration(array(
+  			'datasources' => array(
+    			'pan' => array(
+			    	'adapter' => 'mysql',
+			    	'connection' => array (
+				        'dsn' 		=> 'mysql:host=' . _DB_SERVER_ . ';dbname=' . _DB_NAME_,
+				        'user' 		=> _DB_USER_,
+				        'password' 	=> _DB_PASSWD_
+      				),
+    			),
+    			'default' => 'pan',
+  			),
+  			'generator_version' => '1.6.3',
+		));
+		
+		Propel :: initialize();
+		
+	}
+	
+	private function getBaseURL() {
+		global $currentIndex;
+		return $currentIndex
+			. '&configure=' 	. Tools :: getValue('configure')
+			. '&module_name=' 	. Tools :: getValue('module_name')
+			. '&tab_module=' 	. Tools :: getValue('tab_module')
+			. '&token=' 		. Tools :: getAdminTokenLite('AdminModules');
 	}
 	
 	public function install() {
@@ -30,11 +89,49 @@ class Pan extends Module {
 			
 	}
 	
+	public function getContent() {
+		
+		global $smarty;
+		
+		$root = Pan_Db_TemplateDirectoryQuery :: create()->findRoot();
+		
+		$id_template_directory = Tools :: getValue('id_template_directory', false);
+		
+		$templates = array();
+		
+		$directory = $root;
+		
+		if ($id_template_directory) {
+			
+			$directory = Pan_Db_TemplateDirectoryQuery :: create()
+				->findOneByIdTemplateDirectory($id_template_directory);
+			
+			$rows = Pan_Db_TemplateQuery :: create()
+				->findByIdTemplateDirectory($id_template_directory)
+				;
+				
+			if (count($rows) > 0) {
+				$templates = $rows;
+			}
+			
+		}
+		
+		$smarty->assign('root', 		$root);
+		$smarty->assign('directory', 	$directory);
+		$smarty->assign('templates', 	$templates);
+		$smarty->assign('baseURL', 		$this->getBaseURL());
+		
+		$content = $this->display(__FILE__, 'preferences.tpl');
+		return $content;
+		
+	}
+	
 	public function hookHeader($params) {
 		
 		global $smarty;
 		
-		stream_wrapper_register("theme", "Pan_Resource_Theme");
+		stream_wrapper_register("theme", 	"Pan_Resource_Theme");
+		stream_wrapper_register("db", 		"Pan_Resource_Db");
 		
 		$smarty->registerPlugin('function', 'ps_url', 			array('Pan', 'ps_url'));
 		$smarty->registerPlugin('function', 'ps_hook', 			array('Pan', 'ps_hook'));

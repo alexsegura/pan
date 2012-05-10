@@ -43,12 +43,24 @@ Useful if you don't need to override all the templates and want to fallback to d
 
 The **db://** stream allows to include template which source is **stored in database**.
 
-{pan} ships with a preferences page allowing to author templates, and organize them 
-in a tree structure (just like folders). 
+{pan} comes with a (basic) web-based template explorer and a template editor, 
+to create and organize templates, for example :
 
-**Come and help improve it**
+<pre>
+Templates
+|-- ads
+|   |-- block01      <= /ads/block01
+|   |-- block02      <= /ads/block02
+|   `-- block03      <= /ads/block03
+|-- various
+|   |-- special-link <= /various/special-link
+|   `-- faq          <= /various/faq
+`-- foo              <= /foo
+</pre>
 
-Templates can then be expressed with their materialized path. 
+For easy usage, templates can then be expressed with their materialized path. 
+
+**Fork this project and help improve the template editor !**
 
 ```smarty
     {* Displays the template named block1, stored in folder /ads in database *}

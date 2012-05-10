@@ -2,8 +2,7 @@
 
 /**
  * Class used as a stream wrapper for the db:// scheme. 
- * Loads templates from the database, based on their 
- * materialized path.  
+ * Loads templates from the database, based on their materialized path.  
  * 
  * @author Alexandre Segura <mex.zktk@gmail.com>
  */
@@ -53,19 +52,10 @@ class Pan_Resource_Db {
     	if (isset($this->template)) {
     		return $this->template->getContent();
     	}  else {
+    		// Don't return an empty string to avoid a Smarty error !
     		return '<!-- -->';
     	}
         
-    }
-
-    function stream_write($data) {
-    	Pan :: $logger->log(__METHOD__);
-        return 0;
-    }
-
-    function stream_tell() {
-    	Pan :: $logger->log(__METHOD__);
-        return 0;
     }
 
     /**
@@ -73,6 +63,18 @@ class Pan_Resource_Db {
      */
     function stream_eof() {
         return $this->eof;
+    }
+    
+    /* Not implemented */
+    
+	function stream_write($data) {
+    	Pan :: $logger->log(__METHOD__);
+        return 0;
+    }
+
+    function stream_tell() {
+    	Pan :: $logger->log(__METHOD__);
+        return 0;
     }
 
     function stream_seek($offset, $whence) {

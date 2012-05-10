@@ -23,14 +23,6 @@ class Pan extends Module {
 		
 		$this->initPropel();
 		
-		/*
-		// TODO Do this on install, to create a root
-		$s1 = new Pan_Db_TemplateDirectory();
-		$s1->setName('Templates');
-		$s1->makeRoot();
-		$s1->save();
-		*/
-		
 	}
 	
 	private function autoload() {
@@ -84,9 +76,53 @@ class Pan extends Module {
 	public function install() {
 		
 		return parent :: install()
+			&& $this->resetDb()
 			&& $this->registerHook('header')
 			;
 			
+	}
+	
+	private function resetDb() {
+		
+		$prefix = _DB_PREFIX_;
+		$engine = _MYSQL_ENGINE_;
+		
+		$statements = array();
+		
+		$statements[] 	= "DROP TABLE IF EXISTS `${prefix}template_directory`";
+		$statements[] 	= "CREATE TABLE `${prefix}template_directory` ("
+						. "`id_template_directory` int(11) NOT NULL AUTO_INCREMENT,"
+						. "`node_level` int(11) NOT NULL,"
+						. "`node_left` int(11) NOT NULL,"
+						. "`node_right` int(11) NOT NULL,"
+						. "`name` varchar(64) DEFAULT NULL,"
+						. "PRIMARY KEY (`id_template_directory`)"
+						. ") ENGINE=$engine"
+						;
+
+		$statements[] 	= "DROP TABLE IF EXISTS `${prefix}template`";
+		$statements[] 	= "CREATE TABLE `${prefix}template` ("
+						. "`id_template` int(11) NOT NULL AUTO_INCREMENT,"
+						. "`id_template_directory` int(11) NOT NULL,"
+						. "`name` varchar(64) NOT NULL,"
+						. "`content` text,"
+						. "PRIMARY KEY (`id_template`)"
+						. ") ENGINE=$engine"
+						;
+
+		foreach ($statements as $statement) {
+			self :: $logger->log($statement);
+			$res = Db :: getInstance()->Execute($statement);
+			self :: $logger->log($res);
+		}
+		
+		$root = new Pan_Db_TemplateDirectory();
+		$root->setName('Templates');
+		$root->makeRoot();
+		$root->save();
+		
+		return true;
+						
 	}
 	
 	public function getContent() {
@@ -95,10 +131,10 @@ class Pan extends Module {
 		
 		$root = Pan_Db_TemplateDirectoryQuery :: create()->findRoot();
 		
-		$id_template_directory = Tools :: getValue('id_template_directory', false);
+		$id_template_directory 	= Tools :: getValue('id_template_directory', false);
+		$action					= Tools :: getValue('action', false);
 		
 		$templates = array();
-		
 		$directory = $root;
 		
 		if ($id_template_directory) {
@@ -121,7 +157,100 @@ class Pan extends Module {
 		$smarty->assign('templates', 	$templates);
 		$smarty->assign('baseURL', 		$this->getBaseURL());
 		
+		$screen_content = '';
+		if ($action) {
+			
+			switch ($action) {
+				
+				case 'add-directory' : 
+					
+					$smarty->assign('parent', $directory);
+					
+					$screen_content = $smarty->fetch(_PS_ROOT_DIR_ . '/modules/pan/directory-form.tpl');
+					
+					break;
+					
+				case 'save-directory' : 
+					
+					$id_parent_template_directory 	= Tools :: getValue('id_parent_template_directory', false);
+					$name 							= Tools :: getValue('name', false);
+					
+					if ($id_parent_template_directory) {
+						
+						// TODO Validate form
+						
+						if ($parentDirectory = 
+							Pan_Db_TemplateDirectoryQuery :: create()->findOneByIdTemplateDirectory($id_parent_template_directory)) {
+							
+							$subDirectory = new Pan_Db_TemplateDirectory();
+							$subDirectory->setName($name);
+							
+							$parentDirectory->addChild($subDirectory);
+							$subDirectory->save();
+							
+							// Redirect to parent directory to see new directory and chill !
+							Tools :: redirectAdmin($this->getBaseURL() 
+								. '&id_template_directory=' . $id_parent_template_directory);
+							return;
+							
+						}
+						
+					}
+					
+					break;
+				
+				case 'edit-template' : 
+					
+					$id_template = Tools :: getValue('id_template', false);
+					if ($id_template) {
+						$template = Pan_Db_TemplatePeer :: retrieveByPK($id_template);
+						$smarty->assign('template', $template);
+					}
+					$screen_content = $smarty->fetch(_PS_ROOT_DIR_ . '/modules/pan/template-form.tpl');
+					
+					break;
+					
+				case 'save-template' : 
+					
+					$id_template = Tools :: getValue('id_template', false);
+					if ($id_template) {
+						$template = Pan_Db_TemplatePeer :: retrieveByPK($id_template);
+					} else {
+						$template = new Pan_Db_Template();
+					}
+					
+					$id_template_directory 	= Tools :: getValue('id_template_directory', false);
+					$name 					= Tools :: getValue('name', '');
+					$content 				= Tools :: getValue('content', '');
+					
+					$template->setName($name);
+					$template->setContent($content);
+					
+					if ($id_template_directory) {
+						
+						$template->setIdTemplateDirectory($id_template_directory);
+						$template->save();
+						
+						Tools :: redirectAdmin($this->getBaseURL() 
+							. '&id_template_directory=' . $id_template_directory);
+						return;
+						
+					}
+					
+					$smarty->assign('template', $template);
+					$screen_content = $smarty->fetch(_PS_ROOT_DIR_ . '/modules/pan/template-form.tpl');
+					
+					break;
+				
+			}
+			
+		} else {
+			$screen_content = $smarty->fetch(_PS_ROOT_DIR_ . '/modules/pan/explorer.tpl');
+		}
+		
+		$smarty->assign('screen_content', $screen_content);
 		$content = $this->display(__FILE__, 'preferences.tpl');
+		
 		return $content;
 		
 	}

@@ -43,11 +43,18 @@
 		{assign var=liClass value=implode($liClass, ' ')}
 		
 		<li class="{$liClass}">
-			<span class="folder">&nbsp;
-			<a href="{$baseURL}&id_template_directory={$node->getIdTemplateDirectory()}">{$node->getName()}</a></span>
-		{if $node->hasChildren()}<ul>{/if}
-		</li>
-		{if $isLast}</ul>{/if}
+		
+			<span class="folder">
+			{if $directory->getIdTemplateDirectory() == $node->getIdTemplateDirectory()}<strong>{/if}
+			&nbsp;<a href="{$baseURL}&id_template_directory={$node->getIdTemplateDirectory()}">{$node->getName()}</a>
+			{if $directory->getIdTemplateDirectory() == $node->getIdTemplateDirectory()}</strong>{/if}
+			</span>
+			
+		{if $node->hasChildren()}<ul>{else}</li>{/if}
+		
+		
+		
+		{if $isLast && !$node->hasChildren()}</ul>{/if}
 		
 	{/foreach}
 	
@@ -57,21 +64,7 @@
 
 <div id="right-col">
 
-	<table class="table" cellpadding="0" cellspacing="0" style="width: 100%;">
-
-		<th>{l s='Name' mod='pan'}</th>
-		<th>{l s='Path' mod='pan'}</th>
-		<th>{l s='Content' mod='pan'}</th>
-	
-		{foreach from=$templates item=template}
-		<tr>
-			<td>{$template->getName()}</td>
-			<td>{$template->getMaterializedPath()}</td>
-			<td>{$template->getContent()}</td>
-		</tr>
-		{/foreach}
-		
-	</table>
+	{$screen_content}
 
 </div>
 <div class="clearfix"></div>

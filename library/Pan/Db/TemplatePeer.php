@@ -19,6 +19,8 @@ class Pan_Db_TemplatePeer extends Pan_Db_Propel_TemplatePeer {
 		
 		$pieces = explode('/', $path);
 		
+		Pan :: $logger->log('pieces : ' . print_r($pieces, 1));
+		
 		$templateName = array_pop($pieces);
 		
 		array_shift($pieces);
@@ -26,20 +28,25 @@ class Pan_Db_TemplatePeer extends Pan_Db_Propel_TemplatePeer {
 		$level = count($pieces);
 		$name = array_pop($pieces);
 		
-		$query = Pan_Db_TemplateDirectoryQuery :: create()
+		Pan :: $logger->log("Looking for dir $name at level $level");
+		
+		// Several dirs with the same name can be at the same level !
+		$directories = Pan_Db_TemplateDirectoryQuery :: create()
 			->filterByNodeLevel($level)
 			->filterByName($name)
+			->find()
 			;
 		
-		if ($templateDirectory = $query->findOne()) {
+		foreach ($directories as $directory) {
 			
 			$templateQuery = Pan_Db_TemplateQuery :: create()
-				->filterByIdTemplateDirectory($templateDirectory->getIdTemplateDirectory())
+				->filterByIdTemplateDirectory($directory->getIdTemplateDirectory())
 				->filterByName($templateName)
 				;
 			
-			return $templateQuery->findOne();
-				
+			if ($template = $templateQuery->findOne()) {
+				return $template;
+			}
 		}
 			
 		return null;

@@ -41,10 +41,12 @@ Useful if you don't need to override all the templates and want to fallback to d
 
 **db://**
 
-The **db://** stream allows to include template which source is stored in database.
+The **db://** stream allows to include template which source is **stored in database**.
 
 {pan} ships with a preferences page allowing to author templates, and organize them 
-in a tree structure (just like folders). **Currently in development, come and help finalize it**
+in a tree structure (just like folders). 
+
+**Come and help improve it**
 
 Templates can then be expressed with their materialized path. 
 

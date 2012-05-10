@@ -47,6 +47,7 @@ The **db://** stream allows to include template which source is **stored in data
 to create and organize templates, for example :
 
 <pre>
+
 Templates
 |-- ads
 |   |-- block01      <= /ads/block01
@@ -56,6 +57,7 @@ Templates
 |   |-- special-link <= /various/special-link
 |   `-- faq          <= /various/faq
 `-- foo              <= /foo
+
 </pre>
 
 For easy usage, templates can then be expressed with their materialized path. 

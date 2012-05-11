@@ -28,14 +28,17 @@ class Pan_Db_TemplatePeer extends Pan_Db_Propel_TemplatePeer {
 		$level = count($pieces);
 		$name = array_pop($pieces);
 		
-		Pan :: $logger->log("Looking for dir $name at level $level");
-		
-		// Several dirs with the same name can be at the same level !
-		$directories = Pan_Db_TemplateDirectoryQuery :: create()
-			->filterByNodeLevel($level)
-			->filterByName($name)
-			->find()
-			;
+		if ($level > 0) {
+			Pan :: $logger->log("Looking for dir $name at level $level");
+			// Several dirs with the same name can be at the same level !
+			$directories = Pan_Db_TemplateDirectoryQuery :: create()
+				->filterByNodeLevel($level)
+				->filterByName($name)
+				->find()
+				;
+		} else {
+			$directories = array(Pan_Db_TemplateDirectoryQuery :: create()->findRoot());
+		}
 		
 		foreach ($directories as $directory) {
 			

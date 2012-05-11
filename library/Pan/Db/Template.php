@@ -19,20 +19,26 @@ class Pan_Db_Template extends Pan_Db_Propel_Template {
 		
 		$directory = Pan_Db_TemplateDirectoryQuery :: create()
 				->findOneByIdTemplateDirectory($this->getIdTemplateDirectory());
+				
+		if ($directory->isRoot()) {
+			return '/' . $this->getName();
+		} else {
 
-		$ancestors = $directory->getAncestors();
-		
-		$elements = array();
-		
-		foreach ($ancestors as $ancestor) {
-			if (!$ancestor->isRoot()) {
-				$elements[] = $ancestor->getName();
+			$ancestors = $directory->getAncestors();
+			
+			$elements = array();
+			
+			foreach ($ancestors as $ancestor) {
+				if (!$ancestor->isRoot()) {
+					$elements[] = $ancestor->getName();
+				}
 			}
+			
+			$elements[] = $directory->getName();
+			
+			return '/' . implode($elements, '/') . '/' . $this->getName();
+			
 		}
-		
-		$elements[] = $directory->getName();
-		
-		return '/' . implode($elements, '/') . '/' . $this->getName();
 		
 	}
 	

@@ -10,7 +10,7 @@ It is largely inspired by the Java Server Pages Tag Libraries
 Requirements
 ------------
 
-{pan} requires Smarty 3. 
+{pan} requires **Smarty 3** and **PDO MySQL**. 
 
 Installation
 ----------------

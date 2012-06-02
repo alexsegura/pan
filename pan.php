@@ -15,35 +15,50 @@ class Pan extends Module {
 		
 		parent :: __construct();
 		
+		// Registers own autoload function on top of autoload stack
+		// Existing autoload functions are preserved		
+		$functions = spl_autoload_functions();
 		spl_autoload_register(array($this, 'autoload'));
-		spl_autoload_register('__autoload');
+		foreach ($functions as $function) {
+			spl_autoload_register($function);
+		}
+		
+		// Initialize Propel
+		$this->initPropel();
 		
 		self :: $logger = new FileLogger(AbstractLogger :: DEBUG);
 		self :: $logger->setFilename(_PS_ROOT_DIR_ . '/log/pan.log');
 		
-		$this->initPropel();
-		
 	}
 	
-	private function autoload() {
+	/**
+	 * Autoload function fo the module. 
+	 * Responsible for loading module's namespaced classes & Zend. 
+	 * @param string $class
+	 */
+	public function autoload($class) {
 		
-		$realpath 	= realpath(dirname(__FILE__) . '/library/');
-		$pathes 	= explode(PATH_SEPARATOR, get_include_path());
-		if (!in_array($realpath, $pathes)) {
-			$pathes[] = $realpath;
+		if (!class_exists('Zend_Exception')) {
+			require_once _PS_ROOT_DIR_ . '/modules/oopssearchengine/library/Zend/Exception.php';
 		}
-		set_include_path(implode(PATH_SEPARATOR, $pathes));
+		if (!class_exists('Zend_Loader')) {
+			require_once _PS_ROOT_DIR_ . '/modules/oopssearchengine/library/Zend/Loader.php';
+		}
 		
-		require_once 'Zend/Loader/Autoloader.php';
-		$loader = Zend_Loader_Autoloader :: getInstance();
-		
-		$loader->registerNamespace('Pan_');
+		if (0 === strpos($class, 'Zend_') || 0 === strpos($class, 'Pan_')) {
+			try {
+				@Zend_Loader :: loadClass($class,  _PS_ROOT_DIR_ . '/modules/pan/library');
+			} catch (Zend_Exception $e) {
+			}
+		}
 		
 	}
 	
 	private function initPropel() {
 		
-		require_once 'propel/Propel.php';
+		if (!class_exists('Propel')) {
+			require_once _PS_ROOT_DIR_ . '/modules/pan/library/propel/Propel.php';
+		}
 		
 		Propel :: setConfiguration(array(
   			'datasources' => array(
@@ -130,6 +145,8 @@ class Pan extends Module {
 		global $smarty;
 		
 		$root = Pan_Db_TemplateDirectoryQuery :: create()->findRoot();
+		
+		
 		
 		$id_template_directory 	= Tools :: getValue('id_template_directory', false);
 		$action					= Tools :: getValue('action', false);

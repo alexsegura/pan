@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Pan - Theme framework for PrestaShop. 
+ * @author Alexandre Segura <mex.zktk@gmail.com>
+ */
 class Pan extends Module {
 	
 	public static $logger;
@@ -32,26 +36,24 @@ class Pan extends Module {
 	}
 	
 	/**
-	 * Autoload function fo the module. 
+	 * Autoload function for the module. 
 	 * Responsible for loading module's namespaced classes & Zend. 
 	 * @param string $class
 	 */
 	public function autoload($class) {
 		
 		if (!class_exists('Zend_Exception')) {
-			require_once _PS_ROOT_DIR_ . '/modules/oopssearchengine/library/Zend/Exception.php';
+			require_once _PS_ROOT_DIR_ . '/modules/pan/library/Zend/Exception.php';
 		}
 		if (!class_exists('Zend_Loader')) {
-			require_once _PS_ROOT_DIR_ . '/modules/oopssearchengine/library/Zend/Loader.php';
+			require_once _PS_ROOT_DIR_ . '/modules/pan/library/Zend/Loader.php';
 		}
-		
 		if (0 === strpos($class, 'Zend_') || 0 === strpos($class, 'Pan_')) {
 			try {
 				@Zend_Loader :: loadClass($class,  _PS_ROOT_DIR_ . '/modules/pan/library');
 			} catch (Zend_Exception $e) {
 			}
 		}
-		
 	}
 	
 	private function initPropel() {
@@ -145,8 +147,6 @@ class Pan extends Module {
 		global $smarty;
 		
 		$root = Pan_Db_TemplateDirectoryQuery :: create()->findRoot();
-		
-		
 		
 		$id_template_directory 	= Tools :: getValue('id_template_directory', false);
 		$action					= Tools :: getValue('action', false);
@@ -272,21 +272,36 @@ class Pan extends Module {
 		
 	}
 	
+	/**
+	 * 
+	 * @param array $params
+	 */
 	public function hookHeader($params) {
 		
 		global $smarty;
 		
+		// We register stream wrappers that will be 
+		// usable by Smarty in {include} statements
 		stream_wrapper_register("theme", 	"Pan_Resource_Theme");
 		stream_wrapper_register("db", 		"Pan_Resource_Db");
 		
+		// Smarty function plugins
 		$smarty->registerPlugin('function', 'ps_url', 			array('Pan', 'ps_url'));
 		$smarty->registerPlugin('function', 'ps_hook', 			array('Pan', 'ps_hook'));
 		$smarty->registerPlugin('function', 'ps_breadcrumb',	array('Pan', 'ps_breadcrumb'));
 		
+		// Smarty block plugins
 		$smarty->registerPlugin('block', 	'ps_show', 		array('Pan', 'ps_show'));
 		
 	}
 	
+	/**
+	 * Invokes a hook.
+	 * If specified, the hook will be called only on one module.
+	 * If specified, another template will be rendered. 
+	 * @param array $params
+	 * @param Smarty $smarty
+	 */
 	public static function ps_hook($params, &$smarty) {
 		
 		$moduleName = $params['mod']; // FIXME mod should be optional

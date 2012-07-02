@@ -22,9 +22,13 @@ Use the "ZIP" button above to get the source tree, unzip it in prestashop/module
 NEW ! Base theme
 ----------------
 
-{pan} now features a base theme, in the /themes folder. 
+To demonstrate how it works, {pan} now comes with a theme, based on [Twitter Bootstap](http://twitter.github.com/bootstrap/)
 
-The theme is based on [Twitter Bootstap](http://twitter.github.com/bootstrap/)
+A live demo of the theme can be seen [here](http://www.zktk.org/pan/)
+
+More than a demo, this theme aims to become a community-driven template
+
+**Share your best practices**
 
 Template streams
 ----------------

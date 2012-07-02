@@ -19,6 +19,13 @@ Installation
 
 Use the "ZIP" button above to get the source tree, unzip it in prestashop/modules/pan, install it in the admin panel, and start using it. 
 
+NEW ! Base theme
+----------------
+
+{pan} now features a base theme, in the /themes folder. 
+
+The theme is based on [Twitter Bootstap](http://twitter.github.com/bootstrap/)
+
 Template streams
 ----------------
 

@@ -34,7 +34,12 @@ class Pan_Resource_Theme {
 			$themeName 	= $url['host'];
 		// Path with default theme. Ex : theme://template
 		} else {
-			$tplName 	= $url['host'];
+			
+			$tplName = $url['host'];
+			if (isset($url['path'])) {
+				$tplName .= $url['path'];
+			}
+			
 			$themeName 	= _THEME_NAME_;
 		}
 		

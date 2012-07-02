@@ -52,6 +52,8 @@ class Pan extends Module {
 			try {
 				@Zend_Loader :: loadClass($class,  _PS_ROOT_DIR_ . '/modules/pan/library');
 			} catch (Zend_Exception $e) {
+				// FIXME
+				// Rethrow Exception or do nothing based on some env var ?
 			}
 		}
 	}
@@ -293,6 +295,17 @@ class Pan extends Module {
 		// Smarty block plugins
 		$smarty->registerPlugin('block', 	'ps_show', 		array('Pan', 'ps_show'));
 		
+		// Smarty modifier plugins
+		$smarty->registerPlugin('modifier', 'ps_json', 		array('Pan', 'ps_json'));
+		
+		$smarty->assign('PS_CONFIG', new Pan_Helper_Configuration());
+		// $smarty->assign('PS_CONFIG', array('PS_DISPLAY_QTIES' => 'okkk'));
+		
+		
+	}
+	
+	public static function ps_json($value) {
+		return json_encode($value);
 	}
 	
 	/**
@@ -300,25 +313,46 @@ class Pan extends Module {
 	 * If specified, the hook will be called only on one module.
 	 * If specified, another template will be rendered. 
 	 * @param array $params
-	 * @param Smarty $smarty
+	 * @param $smarty
 	 */
-	public static function ps_hook($params, &$smarty) {
+	public static function ps_hook($params, $template) {
 		
-		$moduleName = $params['mod']; // FIXME mod should be optional
 		$hookName	= $params['hook'];
+		$moduleName = isset($params['mod']) ? $params['mod'] : null;
 		$viewName	= isset($params['view']) ? $params['view'] : null;
-		
-	    $module = Module :: getInstanceByName($moduleName);
-	    $contents = Module :: hookExec($hookName, array(), $module->id);
+	    
+	    $id_module = null;
+	    if ($moduleName && $module = Module :: getInstanceByName($moduleName)) {
+	    	$id_module = $module->id;
+	    }
+	    
+	    // TODO
+	    // Auto-attach hook if not attached
+	    
+	    // TODO
+	    // Transmit remaining params to hook method
+	    $contents = Module :: hookExec($hookName, array(), $id_module);
 	    
 	    if ($viewName) {
+	    	
 	    	self :: $logger->log("An alternative view was specified : $viewName");
 	    	
 	    	$path 	= _PS_ROOT_DIR_.'/themes/' . _THEME_NAME_ 
 	    			. '/modules/' . $moduleName . '/' . $viewName . '.tpl';
 	    			
 	    	self :: $logger->log("Rendering view : " . $path);
-	    	$contents = $smarty->fetch($path);
+	    	
+			// FIXME	    	
+	    	// Prestashop 1.5 uses the createData() api 
+	    	// to keep module variables isolated
+	    	// from the global scope 
+	    	// Therefore hook variables are not assigned when fetching
+	    	// alternative template
+	    	// @see http://www.smarty.net/docs/en/api.create.data.tpl
+	    	
+	    	// @see http://www.smarty.net/forums/viewtopic.php?p=78557&sid=8c813a41acdebe2c58be5f1359234d12#78557
+	    	$contents = $template->smarty->fetch($path);
+	    	
 	    }
 	    
 	    return $contents;

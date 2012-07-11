@@ -294,9 +294,11 @@ class Pan extends Module {
 		
 		// Smarty block plugins
 		$smarty->registerPlugin('block', 	'ps_show', 		array('Pan', 'ps_show'));
+		$smarty->registerPlugin('block', 	'handlebars', 	array('Pan', 'handlebars'));
 		
 		// Smarty modifier plugins
-		$smarty->registerPlugin('modifier', 'ps_json', 		array('Pan', 'ps_json'));
+		$smarty->registerPlugin('modifier', 'json', 		array('Pan', 'json'));
+		$smarty->registerPlugin('modifier', 'mustache', 	array('Pan', 'mustache'));
 		
 		$smarty->assign('PS_CONFIG', new Pan_Helper_Configuration());
 		// $smarty->assign('PS_CONFIG', array('PS_DISPLAY_QTIES' => 'okkk'));
@@ -304,8 +306,12 @@ class Pan extends Module {
 		
 	}
 	
-	public static function ps_json($value) {
-		return json_encode($value);
+	public static function json($value) {
+		return @json_encode($value);
+	}
+	
+	public static function mustache($value) {
+		return '{{' . $value . '}}';
 	}
 	
 	/**
@@ -390,6 +396,31 @@ class Pan extends Module {
 			} else if (count($excludes) > 0) {
 				return !in_array($page_name, $excludes) ? $content : '';
 			}
+			
+		}
+		
+	}
+	
+	public static function handlebars($params, $content, &$smarty, &$repeat) {
+
+		if (isset($content)) {
+			
+			$templateName 	= isset($params['templateName']) ? $params['templateName'] : null;
+			$tagName 		= isset($params['tagName']) ? $params['tagName'] : null;
+			
+			$attrs = array();
+			if ($templateName) {
+				$attrs[] = 'data-template-name="' . $templateName . '"'; 
+			}
+			if ($tagName) {
+				$attrs[] = 'data-tag-name="' . $tagName . '"'; 
+			}
+			
+			return '<script type="text/x-handlebars"'
+				. (!empty($attrs) ? ' ' . implode(' ', $attrs) : '')
+				. '>'
+				. $content
+				. '</script>';
 			
 		}
 		

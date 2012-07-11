@@ -31,7 +31,7 @@ More than a demo, this theme aims to become a community-driven template
 **Share your best practices**
 
 Template streams
-----------------
+================
 
 {pan} registers PHP streams for Smarty to resolve templates from different sources. 
 
@@ -110,6 +110,9 @@ mysql> desc ps_template;
 
 </pre>
 
+Smarty function plugins
+=======================
+
 {ps_hook mod=string hook=string [view=string]}
 --------------------------------
 
@@ -131,23 +134,6 @@ All the view variables for the standard hook will be available.
 	{* but displays the view modules/blocklanguages/footer.tpl *}
 	{* under the current theme *}
     {ps_hook mod='blocklanguages' hook='top' view='footer'}
-```
-
-{ps_show includes=mixed excludes=mixed}
----------------------------------------
-
-{ps_show} is a Smarty block plugin that allows to show/hide content based on the page name.
-
-Useful to display columns only on certain pages. 
-
-```smarty
-    {ps_show includes='index'}
-    <p>I'm displayed only on home page</p>
-    {/ps_show}
-
-    {ps_show excludes='category|cms'}
-    <p>I'm not displayed on category and cms pages</p>
-    {/ps_show}
 ```
 
 {ps_url ...}
@@ -173,4 +159,75 @@ Here are some examples :
     {ps_url cms=4}
     {ps_url category=$category}
  ```
+
+Smarty block plugins
+====================
+
+{ps_show includes=mixed excludes=mixed}
+---------------------------------------
+
+{ps_show} is a Smarty block plugin that allows to show/hide content based on the page name.
+
+Useful to display columns only on certain pages. 
+
+```smarty
+    {ps_show includes='index'}
+    <p>I'm displayed only on home page</p>
+    {/ps_show}
+
+    {ps_show excludes='category|cms'}
+    <p>I'm not displayed on category and cms pages</p>
+    {/ps_show}
+```
+
+{handlebars [templateName=string tagName=string]}
+---------------------------------------
+
+{handlebars} is a Smarty block plugin will wrap its content inside a [Handlebars](http://handlebarsjs.com/)
+
+```smarty
+    {handlebars templateName='say-hello'}
+	I'm a handlebars template
+	{/handlebars}
+```
+
+```html
+    <script type="text/x-handlebars" data-template-name="say-hello">
+    I'm a handlebars template
+    </script>
+```
+
+Smarty modifier plugins
+=======================
+
+json
+----
+
+The *json* modifier will convert the input into its JSON representation. 
+
+Useful to convert PHP objects into JavaScript objects ! 
+
+```smarty
+	<script type="text/javascript">
+    var productObj = {$product|json};
+    console.log(product.name);
+    </script>
+```
+
+mustache
+--------
+
+The *mustache* modifier will wrap the input in a [mustache](http://mustache.github.com/)
+
+Useful to avoid too many curly braces when using mustache within Smarty 
+
+```smarty
+	{'user.name'|mustache}
+	{* Equivalent *}
+	{'{{user.name}}'}
+```
+
+
+
+
     

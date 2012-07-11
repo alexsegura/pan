@@ -24,6 +24,8 @@ NEW ! Base theme
 
 To demonstrate how it works, {pan} now comes with a theme, based on [Twitter Bootstap](http://twitter.github.com/bootstrap/)
 
+See {pan} in action in [header.tpl](https://github.com/alexsegura/pan/blob/master/themes/pan-bootstrap-1.4.x/header.tpl) file with {ps_hook} plugin ! 
+
 A live demo of the theme can be seen [here](http://www.zktk.org/pan/)
 
 More than a demo, this theme aims to become a community-driven template

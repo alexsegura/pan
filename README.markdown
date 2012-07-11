@@ -71,11 +71,7 @@ to create and organize templates, for example :
 
 ```
 
-![pan template editor](http://zktk.org/img/pan_template_editor.png)
-
 For easy usage, templates can then be expressed with their materialized path. 
-
-**Fork this project and help improve the template editor !**
 
 ```smarty
     {* Displays the template named block1, stored in folder /ads in database *}
@@ -84,6 +80,10 @@ For easy usage, templates can then be expressed with their materialized path.
     {* Displays the template named foo, located at the root of the templates *}
     {include file="db:/foo"}
 ```
+
+**Fork this project and help improve the template editor !**
+
+![pan template editor](http://zktk.org/img/pan_template_editor.png)
 
 Smarty function plugins
 =======================

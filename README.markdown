@@ -71,6 +71,8 @@ to create and organize templates, for example :
 
 ```
 
+![pan template editor](http://zktk.org/img/pan_template_editor.png)
+
 For easy usage, templates can then be expressed with their materialized path. 
 
 **Fork this project and help improve the template editor !**
@@ -82,33 +84,6 @@ For easy usage, templates can then be expressed with their materialized path.
     {* Displays the template named foo, located at the root of the templates *}
     {include file="db:/foo"}
 ```
-
-**Database schema**
-
-<pre>
-
-mysql> desc ps_template_directory;
-+-----------------------+-------------+------+-----+---------+----------------+
-| Field                 | Type        | Null | Key | Default | Extra          |
-+-----------------------+-------------+------+-----+---------+----------------+
-| id_template_directory | int(11)     | NO   | PRI | NULL    | auto_increment |
-| node_level            | int(11)     | NO   |     | NULL    |                |
-| node_left             | int(11)     | NO   |     | NULL    |                |
-| node_right            | int(11)     | NO   |     | NULL    |                |
-| name                  | varchar(64) | YES  |     | NULL    |                |
-+-----------------------+-------------+------+-----+---------+----------------+
-
-mysql> desc ps_template;
-+-----------------------+-------------+------+-----+---------+----------------+
-| Field                 | Type        | Null | Key | Default | Extra          |
-+-----------------------+-------------+------+-----+---------+----------------+
-| id_template           | int(11)     | NO   | PRI | NULL    | auto_increment |
-| id_template_directory | int(11)     | NO   |     | NULL    |                |
-| name                  | varchar(64) | NO   |     | NULL    |                |
-| content               | text        | YES  |     | NULL    |                |
-+-----------------------+-------------+------+-----+---------+----------------+
-
-</pre>
 
 Smarty function plugins
 =======================
